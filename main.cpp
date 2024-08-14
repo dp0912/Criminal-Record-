@@ -33,9 +33,54 @@ struct Date{
 };
 
 
+// class for Criminal Record
+class Criminal_record{
+    private:
+        string name;
+        string sex;
+        string convict_no;
+        float age;
+        string address;
+        Description description;
+        Court court;
+        Police police;
+        Date date;
+
+    public:
+        Criminal_record() {}// constructor
+
+        // function to input details of criminal record
+        void addRecord(){
+            cout<<"Enter convict number : ";
+            getline(cin,convict_no);
+
+            cout<<"Enter name :";
+            getline(cin,name);
+
+            cout<<"Enter sex (M/F): ";
+            getline(cin,sex);
+
+            cout<<"Enter age: ";
+            cin>>age;
+
+            cout<<"Enter Description of Criminal";
+            cout<<"Color: ";
+            getline(cin,description.color);
+            cout<<"Face: ";
+            getline(cin,description.face_desc);
+            cout<<"Height: ";
+            cin>>description.height;
+            cout<<"Identification mark: ";
+            getline(cin,description.identification_mark);
+
+        }
+
+};
+
 // main function 
 int main()
 {
+    Criminal_record record;
     int choice;
 
     do{
@@ -49,11 +94,11 @@ int main()
 
         switch (choice)
         {
-            case 1: addRecord();
+            case 1: record.addRecord();
                     break;
-            case 2: modifyRecord();
+            case 2: record.modifyRecord();
                     break;
-            case 3: deleteRecord();
+            case 3: record.deleteRecord();
                     break;
             case 4: cout<<" Exiting... \n";
                     break;
