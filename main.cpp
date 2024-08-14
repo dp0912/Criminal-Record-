@@ -3,6 +3,35 @@
 
 using namespace std;
 
+// structure for physical description of criminal 
+struct Description{
+    string color;
+    string face_desc;
+    float height;
+    string identification_mark;
+};
+
+// structure for crime details
+struct Court{
+    string crime;
+    string act;
+    string court_name;
+    string court_address;
+};
+
+// structure for police info
+struct Police{
+    string fir_No;
+    string police_station_address;
+};
+
+// structure for Date
+struct Date{
+    int day;
+    int month;
+    int year;
+};
+
 
 // main function 
 int main()
