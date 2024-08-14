@@ -66,6 +66,9 @@ class Criminal{
             cout<<"Enter age: ";
             cin>>age;
 
+            cout<<"Enter criminal address : ";
+            getline(cin,address);
+
             cout<<"Enter Description of Criminal\n";
             cout<<"Color: ";
             getline(cin,description.color);
@@ -94,6 +97,31 @@ class Criminal{
 
             cout<<"Enter Date: (dd mm yyyy) ";
             cin>>date.day>>date.month>>date.year;
+        }
+
+        void display(){
+            cout<<"Convict number : "<<convict_no<<endl;
+            cout<<"Name : "<<name<<endl;
+            cout<<"Sex : "<<sex<<endl;
+            cout<<"Age : "<<age<<endl;
+            cout<<"Address : "<<address<<endl;
+
+            cout<<"Description : \n";
+            cout<<"Color : "<<description.color<<endl;
+            cout<<"Face : "<<description.face_desc<<endl;
+            cout<<"height : "<<description.height<<endl;
+            cout<<"Identification Mark : "<<description.identification_mark<<endl;
+
+            cout<<"Court Details : \n";
+            cout<<"Crime : "<<court.crime<<endl;
+            cout<<"Act : "<<court.act<<endl;
+            cout<<"Court name : "<<court.court_name<<endl;
+            cout<<"Court Address : "<<court.court_address<<endl;
+
+            cout<<"Police Details : \n";
+            cout<<"FIR number : "<<police.fir_No<<endl;
+            cout<<"Police station address : "<<police.police_station_address<<endl;
+            cout<<"Date of Arrest : "<<date.day<<"/"<<date.month<<"/"<<date.year<<endl;
         }
 
         // getter for convict number 
