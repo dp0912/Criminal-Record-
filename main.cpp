@@ -1,20 +1,110 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cctype>    // For isalpha and isspace
+#include <stdexcept> // For std::runtime_error
 
 using namespace std;
 
-// function to check if date is valid
-bool isvalidDate(int day, int month, int year)
+// Structure to hold date
+struct Date
 {
-    // check range
-    if (year < 1900 || year > 2100)
+    int day;
+    int month;
+    int year;
+};
+
+// Custom exception class for invalid date
+class InvalidDateException : public runtime_error
+{
+public:
+    InvalidDateException() : runtime_error("Invalid date entered. Please enter a valid date.") {}
+};
+
+// Function to check if a string contains only alphabetic characters and spaces
+bool isValidName(const string &name)
+{
+    if (name.empty())
+        return false;
+    for (char c : name)
+    {
+        if (!isalpha(c) && !isspace(c))
+            return false;
+    }
+    return true;
+}
+
+// Function to get a valid name input from the user
+string getValidName(const string &prompt)
+{
+    string name;
+    while (true)
+    {
+        cout << prompt;
+        getline(cin, name);
+        if (isValidName(name))
+        {
+            return name;
+        }
+        else
+        {
+            cout << "Invalid name. Name should only contain alphabetic characters and spaces.\n";
+        }
+    }
+}
+
+// Function to check if a string is a valid positive integer
+bool isValidPositiveInteger(const string &str)
+{
+    if (str.empty())
+        return false;
+    for (char c : str)
+    {
+        if (!isdigit(c))
+            return false;
+    }
+    return true;
+}
+
+// Function to get a positive integer input from the user
+int getPositiveIntegerInput(const string &prompt)
+{
+    string input;
+    int value;
+
+    while (true)
+    {
+        cout << prompt;
+        getline(cin, input);
+
+        if (isValidPositiveInteger(input))
+        {
+            value = stoi(input); // Convert valid string to integer
+            if (value > 0)
+            {
+                return value;
+            }
+            else
+            {
+                cout << "Please enter a positive integer.\n";
+            }
+        }
+        else
+        {
+            cout << "Invalid input. Please enter a positive integer.\n";
+        }
+    }
+}
+
+// Function to check if date is valid
+bool isValidDate(int day, int month, int year)
+{
+    if (year < 0 || year > 2024)
         return false;
     if (month < 1 || month > 12)
         return false;
 
     int daysInMonth;
-    // determine number of days in month
     switch (month)
     {
     case 1:
@@ -32,67 +122,66 @@ bool isvalidDate(int day, int month, int year)
     case 11:
         daysInMonth = 30;
         break;
-
     case 2:
-        // check for leap year
         if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
         {
-            daysInMonth = 29; // leap year
+            daysInMonth = 29; // Leap year
         }
         else
         {
-            daysInMonth = 28; // non-leap year
+            daysInMonth = 28; // Non-leap year
         }
         break;
-
     default:
-        return false; // invalid month
+        return false;
     }
 
-    if (day < 1 || day > daysInMonth) // day range
-        return false;
-
-    return true;
+    return (day > 0 && day <= daysInMonth);
 }
 
-// fucntion to get valid sex input from user
-string getvalidSex()
+// Function to get a valid date input from the user
+Date getValidDate()
 {
-    string sex;
+    Date date;
     while (true)
     {
-        cout << "Enter sex (Male / Female) : ";
-        getline(cin, sex);
-        if (sex == "Male" || sex == "Female")
+        cout << "Enter Date (dd mm yyyy): ";
+        cin >> date.day >> date.month >> date.year;
+
+        // Check if the input is valid
+        if (cin.fail())
         {
-            return sex;
+            cout << "Invalid input. Please enter the date in the format dd mm yyyy.\n";
+            cin.clear();             // Clear the error flag
+            cin.ignore(10000, '\n'); // Ignore the invalid input up to newline
+            continue;
+        }
+
+        // Clear newline left in the buffer
+        cin.ignore(10000, '\n');
+
+        // Validate the date
+        if (isValidDate(date.day, date.month, date.year))
+        {
+            return date;
         }
         else
         {
-            cout << "Invalid input. Please enter 'Male' or 'Female'.\n";
+            cout << "Invalid date. Please enter a valid date.\n";
         }
     }
 }
 
-// function to get valid identification mark input from user
-string getvalidIdentificationMark()
-{
-    string mark;
-    cout << "Enter identification mark (e.g., description of a scar, tatoo etc.) \n";
-    getline(cin, mark);
-    return mark;
-}
-
-// structure to hold criminal description
+// Structure to hold criminal description
 struct Description
 {
     string color;
     string face_desc;
-    float height;
+    int height;
     string identification_mark;
 };
 
-// structure to hold court details
+// Structure to hold court details
 struct Court
 {
     string crime;
@@ -101,29 +190,21 @@ struct Court
     string court_address;
 };
 
-// structure to hold police details
+// Structure to hold police details
 struct Police
 {
     string fir_No;
     string police_station_address;
 };
 
-struct Date
-{
-    int day;
-    int month;
-    int year;
-};
-
-// class to represent a criminal
+// Class to represent a criminal
 class Criminal
-
 {
 private:
     string name;
     string sex;
     string convict_no;
-    float age;
+    int age;
     string address;
     Description description;
     Court court;
@@ -131,21 +212,33 @@ private:
     Date date;
 
 public:
-    Criminal() {} // default constructor
+    Criminal() {} // Default constructor
 
     void input()
     {
         cout << "Enter convict number : ";
         getline(cin, convict_no);
 
-        cout << "Enter name : ";
-        getline(cin, name);
+        // Get valid name input from user
+        name = getValidName("Enter name: ");
 
-        sex = getvalidSex();
+        // Get valid sex input from user
+        while (true)
+        {
+            cout << "Enter sex (Male / Female) : ";
+            getline(cin, sex);
+            if (sex == "Male" || sex == "Female")
+            {
+                break;
+            }
+            cout << "Invalid sex entered. Please enter 'Male' or 'Female'.\n";
+        }
 
-        cout << "Enter age: ";
-        cin >> age;
-        cin.ignore(); // Clear newline left in the buffer
+        // Get valid age input from user
+        age = getPositiveIntegerInput("Enter age: ");
+
+        // Get valid height input from user
+        description.height = getPositiveIntegerInput("Enter height (in cm): ");
 
         cout << "Enter criminal address : ";
         getline(cin, address);
@@ -155,9 +248,6 @@ public:
         getline(cin, description.color);
         cout << "Face: ";
         getline(cin, description.face_desc);
-        cout << "Height: ";
-        cin >> description.height;
-        cin.ignore(); // Clear newline left in the buffer
         cout << "Identification mark: ";
         getline(cin, description.identification_mark);
 
@@ -177,18 +267,11 @@ public:
         cout << "Enter police station address: ";
         getline(cin, police.police_station_address);
 
-        cout << "Enter Date: (dd mm yyyy) ";
-        cin >> date.day >> date.month >> date.year;
-        cin.ignore(); // Clear newline left in the buffer
-
-        while (!isvalidDate(date.day, date.month, date.year))
-        {
-            cout << "Invalid date. Enter date again (dd mm yyyy): ";
-            cin.ignore();
-        }
+        // Get valid date input from user
+        date = getValidDate();
     }
 
-    // function to display the criminal details
+    // Function to display the criminal details
     void display()
     {
         cout << "Convict number : " << convict_no << endl;
@@ -200,7 +283,7 @@ public:
         cout << "Description : \n";
         cout << "Color : " << description.color << endl;
         cout << "Face : " << description.face_desc << endl;
-        cout << "Height : " << description.height << endl;
+        cout << "Height : " << description.height << " cm" << endl; // Display height in cm
         cout << "Identification Mark : " << description.identification_mark << endl;
 
         cout << "Court Details : \n";
@@ -215,23 +298,23 @@ public:
         cout << "Date of Arrest : " << date.day << "/" << date.month << "/" << date.year << endl;
     }
 
-    // function to get the convict number
+    // Function to get the convict number
     string getConvictNo() const
     {
         return convict_no;
     }
 };
 
-// class to manage the collection of criminal records
+// Class to manage the collection of criminal records
 class Criminal_record
 {
 private:
-    vector<Criminal> rec; // vector to store criminal records
+    vector<Criminal> rec; // Vector to store criminal records
 
 public:
-    Criminal_record() {} // default constructor
+    Criminal_record() {} // Default constructor
 
-    // function to add a new criminal record
+    // Function to add a new criminal record
     void addRecord()
     {
         Criminal newCriminal;
@@ -240,7 +323,7 @@ public:
         cout << "\nRecord Added\n";
     }
 
-    // function to modify an existing record
+    // Function to modify an existing record
     void modifyRecord()
     {
         string convict_no;
@@ -268,7 +351,7 @@ public:
         }
     }
 
-    // function to delete a record
+    // Function to delete a record
     void deleteRecord()
     {
         string convict_no;
@@ -295,7 +378,7 @@ public:
         }
     }
 
-    // function to display a specific record
+    // Function to display a specific record
     void displayRecord()
     {
         string convict_no;
@@ -319,10 +402,10 @@ public:
     }
 };
 
-// main function
+// Main function
 int main()
 {
-    Criminal_record record; // object to manage criminal record.
+    Criminal_record record; // Object to manage criminal record
     int choice;
 
     do
